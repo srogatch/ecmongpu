@@ -19,7 +19,7 @@ set(LIMB_BITS 32)
 if(DEFINED ENV{BITWIDTH})
 	set(BITWIDTH $ENV{BITWIDTH})
 else()
-	set(BITWIDTH 192)
+	set(BITWIDTH 256)
 endif()
 message("Building for ${BITWIDTH}-bit moduli")
 
@@ -27,7 +27,7 @@ message("Building for ${BITWIDTH}-bit moduli")
 set(BLOCK_SIZE 128)
 
 # Curves per single batch.
-set(BATCH_JOB_SIZE 32768)
+set(BATCH_JOB_SIZE 32768 CACHE STRING "Batch job size" FORCE)
 
 # Window size for w-NAF.
 if(DEFINED ENV{WINDOW_SIZE})
