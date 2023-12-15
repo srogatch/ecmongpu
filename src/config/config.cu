@@ -94,7 +94,7 @@ int file_output(char* string, run_config config){
 int socket_output(char* string, run_config config){
   if(config->server.client_socket != -1){
 	  pthread_mutex_lock(&mutex_output);
-		send(config->server.client_socket, string, strlen(string), 0);
+		//send(config->server.client_socket, string, strlen(string), 0);
     fflush(config->files.outfile_fp);
 		pthread_mutex_unlock(&mutex_output);
   }

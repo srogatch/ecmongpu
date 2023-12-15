@@ -53,61 +53,61 @@ static ssize_t readLine(int fd, char *buffer, size_t n) {
 }
 
 void *server_thread_run(void *configv) {
-	run_config config = (run_config) configv;
+	// run_config config = (run_config) configv;
 
-	if (config->server.port == 0) {
-		LOG_FATAL("No server Port set.");
-		exit(EXIT_FAILURE);
-	}
+	// if (config->server.port == 0) {
+	// 	LOG_FATAL("No server Port set.");
+	// 	exit(EXIT_FAILURE);
+	// }
 
-	struct sockaddr_in address;
-	int opt = 1;
-	int addrlen = sizeof(address);
+	// struct sockaddr_in address;
+	// int opt = 1;
+	// int addrlen = sizeof(address);
 
-	// Creating socket file descriptor
-	if ((config->server.socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-		perror("socket failed");
-		exit(EXIT_FAILURE);
-	}
+	// // Creating socket file descriptor
+	// if ((config->server.socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+	// 	perror("socket failed");
+	// 	exit(EXIT_FAILURE);
+	// }
 
-	// Forcefully attaching socket to the port 8080
-	if (setsockopt(config->server.socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-		perror("setsockopt");
-		exit(EXIT_FAILURE);
-	}
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(config->server.port);
+	// // Forcefully attaching socket to the port 8080
+	// if (setsockopt(config->server.socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+	// 	perror("setsockopt");
+	// 	exit(EXIT_FAILURE);
+	// }
+	// address.sin_family = AF_INET;
+	// address.sin_addr.s_addr = INADDR_ANY;
+	// address.sin_port = htons(config->server.port);
 
-	// Forcefully attaching socket to the port 8080
-	if (bind(config->server.socket, (struct sockaddr *) &address, sizeof(address)) < 0) {
-		perror("bind failed");
-		exit(EXIT_FAILURE);
-	}
+	// // Forcefully attaching socket to the port 8080
+	// if (bind(config->server.socket, (struct sockaddr *) &address, sizeof(address)) < 0) {
+	// 	perror("bind failed");
+	// 	exit(EXIT_FAILURE);
+	// }
 
-	if (listen(config->server.socket, 1) < 0) {
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
+	// if (listen(config->server.socket, 1) < 0) {
+	// 	perror("listen");
+	// 	exit(EXIT_FAILURE);
+	// }
 
-	while (config->run) {
-		LOG_INFO("Waiting for client connection...")
-		if ((config->server.client_socket = accept(config->server.socket,
-												   (struct sockaddr *) &address,
-												   (socklen_t *) &addrlen)) < 0) {
-			perror("accept");
-			exit(EXIT_FAILURE);
-		}
-		LOG_INFO("New client connected")
+	// while (config->run) {
+	// 	LOG_INFO("Waiting for client connection...")
+	// 	if ((config->server.client_socket = accept(config->server.socket,
+	// 											   (struct sockaddr *) &address,
+	// 											   (socklen_t *) &addrlen)) < 0) {
+	// 		perror("accept");
+	// 		exit(EXIT_FAILURE);
+	// 	}
+	// 	LOG_INFO("New client connected")
 
-		char line[1024] = {0};
-		ssize_t len;
-		while ((len = readLine(config->server.client_socket, line, 1024)) > 0) {
-			if (!parse_input(line, len, config)) {
-				LOG_WARNING("Malformed input: %s", line);
-			}
-		}
-	}
+	// 	char line[1024] = {0};
+	// 	ssize_t len;
+	// 	while ((len = readLine(config->server.client_socket, line, 1024)) > 0) {
+	// 		if (!parse_input(line, len, config)) {
+	// 			LOG_WARNING("Malformed input: %s", line);
+	// 		}
+	// 	}
+	// }
 
 	return NULL;
 

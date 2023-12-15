@@ -58,37 +58,38 @@ static ssize_t readLine(int fd, char *buffer, size_t n) {
 }
 
 int sock_connect(char *hostname, int port){
-	int sockfd, numbytes;
-	char buf[BUFSIZE];
-	struct hostent *he;
-	struct sockaddr_in srv_addr;
-	if ((he=gethostbyname(hostname)) == NULL) {  /* get the host info */
-		herror("gethostbyname");
-		exit(1);
-	}
+	// int sockfd, numbytes;
+	// char buf[BUFSIZE];
+	// struct hostent *he;
+	// struct sockaddr_in srv_addr;
+	// if ((he=gethostbyname(hostname)) == NULL) {  /* get the host info */
+	// 	herror("gethostbyname");
+	// 	exit(1);
+	// }
 
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		perror("socket");
-		exit(1);
-	}
+	// if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+	// 	perror("socket");
+	// 	exit(1);
+	// }
 
-	srv_addr.sin_family = AF_INET;      /* host byte order */
-	srv_addr.sin_port = htons(port);    /* short, network byte order */
-	srv_addr.sin_addr = *((struct in_addr *)he->h_addr);
+	// srv_addr.sin_family = AF_INET;      /* host byte order */
+	// srv_addr.sin_port = htons(port);    /* short, network byte order */
+	// srv_addr.sin_addr = *((struct in_addr *)he->h_addr);
 
-	bzero(&(srv_addr.sin_zero), 8);     /* zero the rest of the struct */
+	// bzero(&(srv_addr.sin_zero), 8);     /* zero the rest of the struct */
 
-	if (connect(sockfd, (struct sockaddr *)&srv_addr, sizeof(struct sockaddr)) == -1) {
-		perror("connect");
-		exit(1);
-	}
-	return sockfd;
+	// if (connect(sockfd, (struct sockaddr *)&srv_addr, sizeof(struct sockaddr)) == -1) {
+	// 	perror("connect");
+	// 	exit(1);
+	// }
+	// return sockfd;
+	return -1;
 }
 
 int send_mpz(int sockfd, int id, mpz_t num){
 	char sendbuf[BUFSIZE];
 	int sendbytes = gmp_snprintf(sendbuf, BUFSIZE, " %d %Zi\n", id, num);
-	return send(sockfd, sendbuf, sendbytes, 0);
+	return sendbytes; // send(sockfd, sendbuf, sendbytes, 0);
 }
 
 int read_mpz(int sockfd, int *id, mpz_t f){
