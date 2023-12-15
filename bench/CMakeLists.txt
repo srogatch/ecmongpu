@@ -22,7 +22,7 @@ ENDMACRO()
 if (BUILD_BENCHMARKS)
     add_gpu_benchmark(bench_monprod bench_monprod.cu)
 
-    find_package(PythonInterp)
+    find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
 
     # Generate Config files
     configure_file(yield/generate.py
@@ -33,7 +33,7 @@ if (BUILD_BENCHMARKS)
 	    	   ${CMAKE_CURRENT_BINARY_DIR}/yield/parse.py COPYONLY)
     configure_file(yield/print.py
 	    	   ${CMAKE_CURRENT_BINARY_DIR}/yield/print.py COPYONLY)
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} generate.py
+    execute_process(COMMAND ${Python_EXECUTABLE} generate.py
 		    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/yield/)
 
     # Copy over input files
@@ -57,7 +57,7 @@ if (BUILD_BENCHMARKS)
 			)
     		add_custom_command(
     	        	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/yield/report.${case}.${BASENAME}
-    	        	COMMAND ${PYTHON_EXECUTABLE} parse.py ${case} 
+    	        	COMMAND ${Python_EXECUTABLE} parse.py ${case} 
     	        		${CMAKE_CURRENT_BINARY_DIR}/yield/log/${case}/${BASENAME} 
     	    		${CMAKE_CURRENT_BINARY_DIR}/yield/output/${case}/${BASENAME}
     	    		${CMAKE_CURRENT_BINARY_DIR}/yield/report.${case}.${BASENAME}
@@ -73,7 +73,7 @@ if (BUILD_BENCHMARKS)
 
     add_custom_target(bench
 	    COMMAND cat ${benchlogs} > ${CMAKE_CURRENT_BINARY_DIR}/yield/report
-	    COMMAND ${PYTHON_EXECUTABLE} print.py ${CMAKE_CURRENT_BINARY_DIR}/yield/report
+	    COMMAND ${Python_EXECUTABLE} print.py ${CMAKE_CURRENT_BINARY_DIR}/yield/report
     	    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/yield/
 	    DEPENDS ${benchlogs}
 	    )
