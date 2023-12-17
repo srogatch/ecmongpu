@@ -6,6 +6,8 @@ set(CMAKE_BUILD_TYPE Release)
 
 set(BUILD_BENCHMARKS 1)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 # Options and Settings
 
@@ -108,6 +110,7 @@ find_package(GMP REQUIRED)
 
 # Set CUDA compiler flags
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -lineinfo -Xptxas=-v -lineinfo --keep --compiler-options='-Wall  -Wno-unknown-pragmas'")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xptxas -O3 -Xcompiler -finline-functions")
 
 if(NOT "${GPU_MAX_REG}" STREQUAL "")
   set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -maxrregcount=${GPU_MAX_REG}")

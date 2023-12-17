@@ -442,7 +442,7 @@ int mon_prod_distinct(mp_t r, const mp_t a, const mp_t b, const mon_info *info) 
 }
 
 __device__ __host__
-int mon_prod(mp_t r, const mp_t a, const mp_t b, const mon_info *info) {
+int mon_prod(mp_t __restrict r, const mp_t __restrict a, const mp_t __restrict b, const mon_info __restrict *info) {
 #ifdef __CUDA_ARCH__
 	mp_limb res[LIMBS + 2];
 #pragma unroll
