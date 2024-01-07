@@ -117,14 +117,19 @@ void ecm_stage1(run_config config, batch_naf *batch, size_t stream) {
 										   config->cuda_streams[stream]));
 
 	/* Launch multiplication */
-	LOG_DEBUG("[Device %d] [CUDA Stream %p] Launching scalarmult kernel.",
+	const int shmemBytes = sizeof(shared_mem_cache) * config->cuda_threads_per_block;
+	LOG_DEBUG("[Device %d] [CUDA Stream %p] Launching scalarmult kernel. Shared memory: %d bytes per SM.",
 			  batch->host[stream]->device,
-			  config->cuda_streams[stream]);
+			  config->cuda_streams[stream],
+				shmemBytes);
+	CUDA_SAFE_CALL_NO_SYNC( cudaFuncSetAttribute(&cuda_tw_ed_smul_naf_batch, cudaFuncAttributeMaxDynamicSharedMemorySize,
+		shmemBytes) );
 	cuda_tw_ed_smul_naf_batch<<<batch->host[stream]->cuda_blocks, config->cuda_threads_per_block,
-			(sizeof(shared_mem_cache)) * config->cuda_threads_per_block, config->cuda_streams[stream]>>>
+			shmemBytes, config->cuda_streams[stream]>>>
 					(&batch->dev[stream]->job,
 					config->dev_ctx[batch->host[stream]->device].stage1.dev_bound_naf,
 					config->stage1.bound_naf_digits);
+	CUDA_SAFE_CALL_NO_SYNC(cudaGetLastError());
 
 	/* Copy batch from device to host */
 	CUDA_SAFE_CALL_NO_SYNC(cudaMemcpyAsync(&batch->host[stream]->job,
@@ -133,7 +138,7 @@ void ecm_stage1(run_config config, batch_naf *batch, size_t stream) {
 										   cudaMemcpyDeviceToHost,
 										   config->cuda_streams[stream]));
 
-	cudaStreamSynchronize(config->cuda_streams[stream]);
+	CUDA_SAFE_CALL_NO_SYNC(cudaStreamSynchronize(config->cuda_streams[stream]));
 	batch_finished_cb_stage1(batch->host[stream]);
 
 }

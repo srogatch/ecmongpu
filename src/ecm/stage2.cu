@@ -227,12 +227,16 @@ void ecm_stage2(run_config config, batch_naf *batch, size_t stream) {
 	}
 	LOG_DEBUG("[Thread %d] %d tasks in batch for Stage 2", stream, batch->host[stream]->n_jobs);
 
-	LOG_VERBOSE("[CUDA Stream %p] Launching stage2 exec kernel.", config->cuda_streams[stream]);
-  	cuda_tw_ed_stage2<<<batch->host[stream]->cuda_blocks, config->cuda_threads_per_block,
-  		sizeof(shared_mem_cache)*config->cuda_threads_per_block, config->cuda_streams[stream]>>>
-			(&batch->dev[stream]->job, config->dev_ctx[batch->host[stream]->device].stage2.global_dev,
-					batch->host[stream]->babysteps.y, batch->host[stream]->babysteps.y_tmp, batch->host[stream]->babysteps.z, batch->host[stream]->babysteps.t,
-					batch->host[stream]->giantsteps.y, batch->host[stream]->giantsteps.z, batch->host[stream]->giantsteps.t, batch->host[stream]->giantsteps.bufsize);
+	const int shmemBytes = sizeof(shared_mem_cache)*config->cuda_threads_per_block;
+	LOG_VERBOSE("[CUDA Stream %p] Launching stage2 exec kernel. Shared memory bytes: %d.",
+		config->cuda_streams[stream], shmemBytes);
+	CUDA_SAFE_CALL_NO_SYNC( cudaFuncSetAttribute(&cuda_tw_ed_stage2,
+		cudaFuncAttributeMaxDynamicSharedMemorySize, shmemBytes) );
+	cuda_tw_ed_stage2<<<batch->host[stream]->cuda_blocks, config->cuda_threads_per_block,
+		shmemBytes, config->cuda_streams[stream]>>>
+		(&batch->dev[stream]->job, config->dev_ctx[batch->host[stream]->device].stage2.global_dev,
+				batch->host[stream]->babysteps.y, batch->host[stream]->babysteps.y_tmp, batch->host[stream]->babysteps.z, batch->host[stream]->babysteps.t,
+				batch->host[stream]->giantsteps.y, batch->host[stream]->giantsteps.z, batch->host[stream]->giantsteps.t, batch->host[stream]->giantsteps.bufsize);
 
 	/* Copy batch from device to host */
 	CUDA_SAFE_CALL_NO_SYNC(cudaMemcpyAsync(&batch->host[stream]->job,

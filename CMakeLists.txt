@@ -12,7 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options and Settings
 
 # Log level: VERBOSE, DEBUG, INFO, WARNING, ERROR, FATAL
-set(LOG_LEVEL INFO)
+set(LOG_LEVEL DEBUG)
 
 # Multi precision limbs, use 32 or 64 bit datatype
 set(LIMB_BITS 32)
@@ -26,7 +26,7 @@ endif()
 message("Building for ${BITWIDTH}-bit moduli")
 
 # Default CUDA threads per block.
-set(BLOCK_SIZE 128)
+set(BLOCK_SIZE 256)
 
 # Curves per single batch.
 set(BATCH_JOB_SIZE 32768 CACHE STRING "Batch job size" FORCE)

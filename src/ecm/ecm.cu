@@ -10,7 +10,7 @@
 #define DEBUG_STAGE2 0
 
 
-__global__
+__global__ __launch_bounds__(BLOCK_SIZE, 1)
 void cuda_tw_ed_smul_naf_batch(batch_job_data_naf batch[BATCH_JOB_SIZE],
 							   naf_t scalar, size_t naf_digits) {
 
@@ -46,7 +46,7 @@ void cuda_tw_ed_smul_naf_batch(batch_job_data_naf batch[BATCH_JOB_SIZE],
 
 
 
-__global__
+__global__ __launch_bounds__(BLOCK_SIZE, 1)
 void cuda_tw_ed_stage2(batch_job_data_naf *batch, stage2_global *globals,
 					   mp_strided_t *babysteps_y, mp_strided_t *babysteps_y_tmp, mp_strided_t *babysteps_z,
 					   mp_strided_t *babysteps_t,
@@ -262,7 +262,7 @@ void cuda_tw_ed_stage2(batch_job_data_naf *batch, stage2_global *globals,
 	mp_copy(batch->stage2_result[myjob], res);
 }
 
-__global__
+__global__ __launch_bounds__(BLOCK_SIZE, 1)
 void cuda_tw_ed_smul_batch(batch_job *batch, const mp_p scalar, const unsigned int scalar_bitlength) {
 	int myjob = (blockDim.x * blockIdx.x) + threadIdx.x;
 
@@ -283,7 +283,7 @@ void cuda_tw_ed_smul_batch(batch_job *batch, const mp_p scalar, const unsigned i
 	tw_ed_copy_point(&batch->job[myjob].point, &res);
 }
 
-__global__
+__global__ __launch_bounds__(BLOCK_SIZE, 1)
 void cuda_tw_ed_point_on_curve(batch_job_data *batch) {
 	int myjob = (blockDim.x * blockIdx.x) + threadIdx.x;
 	batch[myjob].on_curve = tw_ed_point_on_curve(&batch[myjob].point,
@@ -291,7 +291,7 @@ void cuda_tw_ed_point_on_curve(batch_job_data *batch) {
 												 &batch[myjob].mon_info);
 }
 
-__global__
+__global__ __launch_bounds__(BLOCK_SIZE, 1)
 void cuda_tw_ed_point_on_curve_naf(batch_job_data_naf *batch) {
 	int myjob = (blockDim.x * blockIdx.x) + threadIdx.x;
 	curve_tw_ed curve;
